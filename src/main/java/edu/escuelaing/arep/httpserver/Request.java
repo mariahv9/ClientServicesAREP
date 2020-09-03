@@ -17,6 +17,7 @@ public class Request {
             String[] components= requestLine.split(" ");
             method = components[0];
             this.requestURI = components[1];
+            System.out.println(requestURI);
             HTTPVersion = components[2];
             setTheuri(new URI(requestURI));
             query = parseQuery(theuri.getQuery());
