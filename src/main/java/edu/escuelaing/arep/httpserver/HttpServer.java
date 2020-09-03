@@ -75,6 +75,7 @@ public class HttpServer {
         boolean requestLineReady = true;
         Request req = null;
         while ((inputLine = in.readLine()) != null) {
+            System.out.println("ENtre al chilo");
             if (requestLineReady) {
                 req = new Request(inputLine);
                 System.out.println("Entre acà");
