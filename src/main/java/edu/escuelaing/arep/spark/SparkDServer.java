@@ -1,10 +1,12 @@
 package edu.escuelaing.arep.spark;
 
 import edu.escuelaing.arep.httpserver.HttpServer;
+import spark.Spark;
 
 public class SparkDServer {
     public static void main(String[] args){
-        HttpServer server = new HttpServer();
+        SparkD spark = new SparkD();
+        HttpServer server = new HttpServer(spark);
         server.start();
     }
 }

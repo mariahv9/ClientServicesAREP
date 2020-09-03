@@ -1,5 +1,7 @@
 package edu.escuelaing.arep.httpserver;
 
+import edu.escuelaing.arep.spark.SparkD;
+
 import java.net.*;
 import java.io.*;
 import java.nio.file.*;
@@ -10,42 +12,39 @@ import java.util.logging.*;
  *
  */
 public class HttpServer {
-
     private int port = 36000;
-    private boolean running = false;
-    private Map<String, String> request;
+    private boolean isRunning = true;
+    private SparkD spark = null;
+
 
     public HttpServer() {
-        this.port = getPort();
-        request = new HashMap<>();
-    }
 
-    public HttpServer(int port) {
+    }
+    public HttpServer(SparkD miSpark) {
+        this.spark = miSpark;
+    }
+    public HttpServer(int port, SparkD spark)  {
         this.port = port;
-        request = new HashMap<>();
+        this.spark = spark;
     }
 
-    public int getPort(){
-        if (System.getenv("PORT") != null){
+    public int getPort() {
+        if (System.getenv("PORT") != null) {
             return Integer.parseInt(System.getenv("PORT"));
         }
-        return 36000;
+        return 36000; // returns default port if heroku-port isn't set(i.e. on localhost)
     }
-
-    public void start() {
-        try {
+    public void start(){
+        try{
+            port = getPort();
             ServerSocket serverSocket = null;
-            this.port = getPort();
-
             try {
                 serverSocket = new ServerSocket(port);
             } catch (IOException e) {
-                System.err.println("Could not listen on port: " + getPort());
+                System.err.println("Could not listen on port: " + port);
                 System.exit(1);
             }
-
-            running = true;
-            while (running) {
+            while(isRunning){
                 try {
                     Socket clientSocket = null;
                     try {
@@ -55,89 +54,50 @@ public class HttpServer {
                         System.err.println("Accept failed.");
                         System.exit(1);
                     }
-
                     processRequest(clientSocket);
-
                     clientSocket.close();
                 } catch (IOException ex) {
                     Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (URISyntaxException e) {
+                    e.printStackTrace();
                 }
             }
             serverSocket.close();
-        } catch (IOException ex) {
-            Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException e) {
+            System.err.println("Could not listen on port: 36000.");
+            System.exit(1);
         }
     }
 
-    private void processRequest(Socket clientSocket) throws IOException {
-        BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        String inputLine;
-
-        boolean requestLineReady = true;
-        Request req = null;
+    public void processRequest(Socket clientSocket) throws IOException, URISyntaxException {
+        PrintWriter out = new PrintWriter(
+                clientSocket.getOutputStream(), true);
+        BufferedReader in = new BufferedReader(
+                new InputStreamReader(clientSocket.getInputStream()));
+        String inputLine, outputLine;
+        boolean resourceInLine = true;
+        Request resource = null;
         while ((inputLine = in.readLine()) != null) {
-            System.out.println("ENtre al chilo");
-            if (requestLineReady) {
-                req = new Request(inputLine);
-                System.out.println("Entre acà");
-
-                requestLineReady = false;
+            if(resourceInLine) {
+                resource = new Request(inputLine);
+                resourceInLine = false;
             }
-            System.out.println("Recibi:"+ inputLine);
-
+            System.out.println("Recibí: " + inputLine);
             if (!in.ready()) {
                 break;
             }
         }
-
-
-        createResponse(req, new PrintWriter(clientSocket.getOutputStream(), true));
-        in.close();
+        createResponse(resource,out,clientSocket);
     }
 
-    private String[] createEntry(String rawEntry) {
-        return rawEntry.split(":");
-    }
-
-    private void createResponse(Request req, PrintWriter out) {
-        String outputLine = testResponse();
-        if (req.getRequestURI().startsWith("/Apps")) {
-        } else {
-            getStaticResource(req.getRequestURI(), out);
+    private void createResponse(Request response, PrintWriter out, Socket clientSocket) throws IOException, URISyntaxException {
+        if (response!= null && response.getRequestURI().startsWith("/API")) {
+            String appuri = response.getRequestURI().substring(4);
+            response.setTheuri(new URI(appuri));
+            spark.get(response.getRequestURI(), out);
+        } else if (response != null){
+            spark.setStaticResourcesPath(response, out, clientSocket);
         }
         out.close();
-    }
-
-    private String testResponse() {
-        String outputLine = "HTTP/1.1 200 OK\r\n"
-                + "Content-Type: text/html\r\n"
-                + "\r\n"
-                + "<!DOCTYPE html>\n"
-                + "<html>\n"
-                + "<head>\n"
-                + "<meta charset=\"UTF-8\">\n"
-                + "<title>Title of the document</title>\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "<h1>Mi propio mensaje</h1>\n"
-                + "</body>\n"
-                + "</html>\n";
-        return outputLine;
-    }
-
-    private void getStaticResource(String path, PrintWriter out) {
-        Path file = Paths.get("src/main/resources/public_html" + path);
-        try (InputStream in = Files.newInputStream(file);
-             BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
-            String header = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n";
-            out.println(header);
-            String line = null;
-            while ((line = reader.readLine()) != null) {
-                out.println(line);
-                System.out.println(line);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(HttpServer.class.getName()).log(Level.SEVERE, null, ex);
-        }
     }
 }
