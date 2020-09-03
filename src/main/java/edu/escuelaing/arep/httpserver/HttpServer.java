@@ -72,27 +72,23 @@ public class HttpServer {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String inputLine;
 
-        boolean requestLineReady = false;
+        boolean requestLineReady = true;
         Request req = null;
         while ((inputLine = in.readLine()) != null) {
-            if (!requestLineReady) {
+            if (requestLineReady) {
                 req = new Request(inputLine);
+                System.out.println("Entre acà");
 
-
-                requestLineReady = true;
-            } else {
-                String[] entry = createEntry(inputLine);
-                if (entry.length > 1) {
-                    request.put(entry[0], entry[1]);
-                }
+                requestLineReady = false;
             }
+            System.out.println("Recibi:"+ inputLine);
+
             if (!in.ready()) {
                 break;
             }
         }
 
 
-        System.out.println("RequestLine: " + req);
         createResponse(req, new PrintWriter(clientSocket.getOutputStream(), true));
         in.close();
     }
