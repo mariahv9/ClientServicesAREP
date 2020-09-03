@@ -18,7 +18,7 @@ public class Request {
 
     public void parseRequestLine(String requestLine){
         try {
-            String[] components= requestLine.split("\\s");
+            String[] components= requestLine.split(" ");
             method = components[0];
             requestURI = components[1];
             HTTPVersion = components[2];

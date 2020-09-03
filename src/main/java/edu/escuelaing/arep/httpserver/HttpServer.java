@@ -72,6 +72,7 @@ public class HttpServer {
         while ((inputLine = in.readLine()) != null) {
             if (!requestLineReady) {
                 request.put("requestLine", inputLine);
+
                 requestLineReady = true;
             } else {
                 String[] entry = createEntry(inputLine);
