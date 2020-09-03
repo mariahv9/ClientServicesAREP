@@ -35,6 +35,7 @@ public class HttpServer {
     public void start() {
         try {
             ServerSocket serverSocket = null;
+            this.port = getPort();
 
             try {
                 serverSocket = new ServerSocket(port);
