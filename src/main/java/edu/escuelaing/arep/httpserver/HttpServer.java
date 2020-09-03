@@ -13,12 +13,15 @@ public class HttpServer {
 
     private int port = 36000;
     private boolean running = false;
+    Map<String, String> request;
 
     public HttpServer() {
+        request = new HashMap<>();
     }
 
     public HttpServer(int port) {
         this.port = port;
+        request = new HashMap<>();
     }
 
     public int getPort(){
@@ -67,7 +70,7 @@ public class HttpServer {
     private void processRequest(Socket clientSocket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String inputLine;
-        Map<String, String> request = new HashMap<>();
+
         boolean requestLineReady = false;
         while ((inputLine = in.readLine()) != null) {
             if (!requestLineReady) {
@@ -84,6 +87,7 @@ public class HttpServer {
                 break;
             }
         }
+        System.out.println(request.get("requestLine"));
         Request req = new Request(request.get("requestLine"));
         System.out.println("RequestLine: " + req);
         createResponse(req, new PrintWriter(clientSocket.getOutputStream(), true));
