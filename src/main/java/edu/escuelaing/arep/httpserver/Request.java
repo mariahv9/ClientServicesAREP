@@ -16,7 +16,7 @@ public class Request {
         try {
             String[] components= requestLine.split(" ");
             method = components[0];
-            requestURI = components[1];
+            this.requestURI = components[1];
             HTTPVersion = components[2];
             setTheuri(new URI(requestURI));
             query = parseQuery(theuri.getQuery());
@@ -30,7 +30,7 @@ public class Request {
     }
 
     public String getRequestURI() {
-        return requestURI;
+        return this.requestURI;
     }
 
     public String getHTTPVersion() {

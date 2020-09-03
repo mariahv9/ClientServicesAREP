@@ -99,10 +99,9 @@ public class HttpServer {
 
     private void createResponse(Request req, PrintWriter out) {
         String outputLine = testResponse();
-        URI theuri = req.getTheuri();
-        if (theuri.getPath().startsWith("/Apps")) {
+        if (req.getRequestURI().startsWith("/Apps")) {
         } else {
-            getStaticResource(theuri.getPath(), out);
+            getStaticResource(req.getRequestURI(), out);
         }
         out.close();
     }
@@ -125,7 +124,7 @@ public class HttpServer {
     }
 
     private void getStaticResource(String path, PrintWriter out) {
-        Path file = Paths.get("target/classes/public_html" + path);
+        Path file = Paths.get("src/main/resources/public_html" + path);
         try (InputStream in = Files.newInputStream(file);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
             String header = "HTTP/1.1 200 OK\r\n" + "Content-Type: text/html\r\n" + "\r\n";
