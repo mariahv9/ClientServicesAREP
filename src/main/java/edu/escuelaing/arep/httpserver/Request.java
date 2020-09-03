@@ -13,10 +13,6 @@ public class Request {
     private Map<String,String> query;
 
     public Request(String requestLine){
-        parseRequestLine(requestLine);
-    }
-
-    public void parseRequestLine(String requestLine){
         try {
             String[] components= requestLine.split(" ");
             method = components[0];
@@ -27,7 +23,6 @@ public class Request {
         } catch (URISyntaxException ex) {
             Logger.getLogger(Request.class.getName()).log(Level.SEVERE, null, ex);
         }
-
     }
 
     public String getMethod() {

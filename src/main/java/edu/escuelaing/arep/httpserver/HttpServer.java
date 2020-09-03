@@ -13,9 +13,10 @@ public class HttpServer {
 
     private int port = 36000;
     private boolean running = false;
-    Map<String, String> request;
+    private Map<String, String> request;
 
     public HttpServer() {
+        this.port = getPort();
         request = new HashMap<>();
     }
 
@@ -36,7 +37,7 @@ public class HttpServer {
             ServerSocket serverSocket = null;
 
             try {
-                serverSocket = new ServerSocket(getPort());
+                serverSocket = new ServerSocket(port);
             } catch (IOException e) {
                 System.err.println("Could not listen on port: " + getPort());
                 System.exit(1);
@@ -72,9 +73,11 @@ public class HttpServer {
         String inputLine;
 
         boolean requestLineReady = false;
+        Request req = null;
         while ((inputLine = in.readLine()) != null) {
             if (!requestLineReady) {
-                request.put("requestLine", inputLine);
+                req = new Request(inputLine);
+
 
                 requestLineReady = true;
             } else {
@@ -87,8 +90,8 @@ public class HttpServer {
                 break;
             }
         }
-        System.out.println(request.get("requestLine"));
-        Request req = new Request(request.get("requestLine"));
+
+
         System.out.println("RequestLine: " + req);
         createResponse(req, new PrintWriter(clientSocket.getOutputStream(), true));
         in.close();
