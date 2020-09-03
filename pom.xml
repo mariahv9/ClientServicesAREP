@@ -3,7 +3,6 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>edu.escuelaing.arep</groupId>
   <artifactId>SparkWebApp</artifactId>
-  <packaging>jar</packaging>
   <version>1.0-SNAPSHOT</version>
   <name>SparkWebApp</name>
   <url>http://maven.apache.org</url>
