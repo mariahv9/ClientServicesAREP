@@ -17,7 +17,6 @@ public class Request {
             String[] components= requestLine.split(" ");
             method = components[0];
             this.requestURI = components[1];
-            System.out.println(requestURI);
             HTTPVersion = components[2];
             setTheuri(new URI(requestURI));
             query = parseQuery(theuri.getQuery());
@@ -39,9 +38,7 @@ public class Request {
     }
 
     public String toString(){
-        return method + " " + requestURI + " " + HTTPVersion + "\n\r" +
-                getTheuri() + "\n\r" +
-                "Query: " + query;
+        return method + " " + requestURI + " " + HTTPVersion + "\n\r" + getTheuri() + "\n\r" + "Query: " + query;
     }
 
     public URI getTheuri() {

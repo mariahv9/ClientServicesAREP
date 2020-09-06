@@ -1,4 +1,4 @@
-package edu.escuelaing.arep.urlReader;
+package edu.escuelaing.arep.urlExercises;
 
 import java.io.*;
 import java.net.*;
