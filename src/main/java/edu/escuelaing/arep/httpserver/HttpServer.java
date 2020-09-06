@@ -84,7 +84,6 @@ public class HttpServer {
                 break;
             }
         }
-        System.out.println(req.getTheuri());
         if(req!=null) {
             createResponse(req, new PrintWriter(clientSocket.getOutputStream(), true), clientSocket);
         }
