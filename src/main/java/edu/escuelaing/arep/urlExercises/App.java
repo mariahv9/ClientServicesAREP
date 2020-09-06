@@ -5,14 +5,22 @@ import java.util.logging.*;
 // Ejercicio 1
 
 /**
- *
+ * This class read and evaluate atributes of url
+ * @author Maria Fernanda Hernandez Vargas
  */
 public class App {
-
+    /**
+     * Scan the url to evaluate
+     * @param args
+     */
     public static void main (String [] args){
         scanURL ("http://ldbn.escuelaing.edu.co:80/AREP/Mitarea.html");
     }
 
+    /**
+     * Parameters to evaluate of url
+     * @param s
+     */
     private static void scanURL(String s) {
         try {
             URL siteURL = new URL (s);

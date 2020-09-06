@@ -9,25 +9,36 @@ import java.util.*;
 import java.util.logging.*;
 
 /**
- *
+ * Class that does the connection with web server
+ * @author Maria Fernanda Hernandez Vargas
  */
 public class HttpServer {
-
     private int port = 36000;
     private boolean running = false;
     private DataBase connect = null;
     private Map<String, String> request;
 
+    /**
+     * Method constructor that obtains port and does request uri
+     */
     public HttpServer() {
         this.port = getPort();
         request = new HashMap<>();
     }
 
+    /**
+     * Method constructor that saves port
+     * @param port
+     */
     public HttpServer(int port) {
         this.port = port;
         request = new HashMap<>();
     }
 
+    /**
+     * Method that obtains port
+     * @return port connection
+     */
     public int getPort(){
         if (System.getenv("PORT") != null){
             return Integer.parseInt(System.getenv("PORT"));
@@ -35,6 +46,9 @@ public class HttpServer {
         return 36000;
     }
 
+    /**
+     * Method that starts connection with sockets
+     */
     public void start() {
         try {
             ServerSocket serverSocket = null;
@@ -70,6 +84,12 @@ public class HttpServer {
         }
     }
 
+    /**
+     * Method that does the process of the request of the uri that
+     * wnats to connect
+     * @param clientSocket
+     * @throws IOException
+     */
     private void processRequest(Socket clientSocket) throws IOException {
         BufferedReader in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         String inputLine;
@@ -90,12 +110,14 @@ public class HttpServer {
         in.close();
     }
 
-    private String[] createEntry(String rawEntry) {
-        return rawEntry.split(":");
-    }
-
+    /**
+     * Method that create response of data base
+     * @param req
+     * @param out
+     * @param clientSocket
+     * @throws IOException
+     */
     private void createResponse(Request req, PrintWriter out, Socket clientSocket) throws IOException {
-        String outputLine = testResponse();
         if (req.getRequestURI().startsWith("/dataBase")) {
             String db = "HTTP/1.1 200 OK\r\n"
                     + "Content-Type: text/html\r\n"
@@ -118,26 +140,15 @@ public class HttpServer {
         out.close();
     }
 
-    private String testResponse() {
-        String outputLine = "HTTP/1.1 200 OK\r\n"
-                + "Content-Type: text/html\r\n"
-                + "\r\n"
-                + "<!DOCTYPE html>\n"
-                + "<html>\n"
-                + "<head>\n"
-                + "<meta charset=\"UTF-8\">\n"
-                + "<title>Title of the document</title>\n"
-                + "</head>\n"
-                + "<body>\n"
-                + "<h1>Mi propio mensaje</h1>\n"
-                + "</body>\n"
-                + "</html>\n";
-        return outputLine;
-    }
-
+    /**
+     * Method that obtains the path to connect
+     * @param path
+     * @param out
+     * @param clientSocket
+     * @throws IOException
+     */
     private void getStaticResource(String path, PrintWriter out, Socket clientSocket) throws IOException{
         Path file = Paths.get("src/main/resources/public_html" + path);
-        boolean pic = false;
         String resource = "HTTP/1.1 200 OK\r\n";
         if (path.contains(".html") || path.equals("/")){
             path = "index.html";
@@ -146,7 +157,6 @@ public class HttpServer {
                         + "<!DOCTYPE html>\n");
         }else if (path.contains(".jpg")) {
             getImage(path, clientSocket.getOutputStream());
-            pic = true;
         }
         try (InputStream in = Files.newInputStream(file);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in)))
@@ -161,6 +171,11 @@ public class HttpServer {
         }
     }
 
+    /**
+     * Method that obtains the image and helps to show on web site
+     * @param path
+     * @param outputStream
+     */
     public void getImage (String path, OutputStream outputStream){
         File file = new File("src/main/resources" + path);
         try {
@@ -175,6 +190,10 @@ public class HttpServer {
         }
     }
 
+    /**
+     * Method that connect to persistence
+     * @return
+     */
     public String getDataBase (){
         DataBase db = new DataBase();
         ArrayList <String []> data = db.getTable();

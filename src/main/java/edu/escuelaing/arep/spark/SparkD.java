@@ -1,21 +1,23 @@
 package edu.escuelaing.arep.spark;
 
-import edu.escuelaing.arep.httpserver.Request;
-import java.io.PrintWriter;
-import java.net.Socket;
 import java.util.*;
 
+/**
+ * This class construct the service Spark
+ * @author Maria Fernanda Hernandez Vargas
+ */
 public class SparkD {
     private static Map<String, String> path = new HashMap<>();
 
-    public static String get(String resourcePath, String f){
+    /**
+     * Method that get the path
+     * @param resourcePath
+     * @return
+     */
+    public static String get(String resourcePath){
         if (path.containsKey(resourcePath)){
             return path.get(resourcePath);
         }
         return null;
-    }
-
-    public void setStaticResourcesPath(String resourcesPath, String data){
-        path.put(resourcesPath, data);
     }
 }

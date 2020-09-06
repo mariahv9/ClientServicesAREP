@@ -15,14 +15,13 @@ git clone https://github.com/mariahv9/ClientServicesAREP
 ```
 cd clientServicesAREP
 mvn package
-java cp 
 ```
 
 ### Despliegue de la App
 
 Abrir el siguiente para ver el despliegue:
 
-* [HerokuApp]()
+* [HerokuApp](https://clientservices.herokuapp.com/index.html)
 
 ### Control versionamiento
 

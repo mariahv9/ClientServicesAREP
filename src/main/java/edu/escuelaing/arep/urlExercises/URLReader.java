@@ -9,15 +9,23 @@ import java.util.Set;
 // Ejercicio 2
 
 /**
- *
+ * This class reads url
+ * @author Maria Fernanda Hernandez Vargas
  */
 public class URLReader {
 
+    /**
+     * Method that read the url
+     * @param args
+     */
     public static void main(String[] args) {
         readURL("http://localhost:36000/otroarchivoaqui.do?value=56");
-
     }
 
+    /**
+     * Method that does the connection and evaluation of url
+     * @param sitetoread
+     */
     public static void readURL(String sitetoread) {
         try {
             URL siteURL = new URL(sitetoread);
